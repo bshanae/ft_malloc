@@ -7,7 +7,7 @@ void show_alloc_mem()
 {
 	size_t total_allocated_memory = 0;
 
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		if (heap->min_block_payload_size == TINY_BLOCK_MIN_PAYLOAD_SIZE)
 			write_str("TINY : ");
@@ -60,7 +60,7 @@ void show_alloc_mem_ex(const char *message)
 		write_break();
 	}
 
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		write_str("== HEAP =======================================================================");
 		write_break();
@@ -127,7 +127,7 @@ void show_mem_debug(const char *message, t_bool show_allocated_blocks, t_bool sh
 		write_break();
 	}
 
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		write_ptr(heap);
 		write_str(": total_size=");
@@ -177,7 +177,7 @@ size_t get_total_available_memory()
 {
 	size_t total_available_memory = 0;
 
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		const size_t available_memory = heap_get_end(heap) - heap_get_begin(heap);
 		total_available_memory += available_memory;
@@ -190,7 +190,7 @@ size_t get_total_allocated_memory()
 {
 	size_t total_allocated_memory= 0;
 
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		for (struct block_header *header = heap_get_begin(heap); heap_does_include_ptr(heap, header); header = block_get_next_header(block_get_footer_from_header(header)))
 		{

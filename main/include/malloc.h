@@ -14,7 +14,7 @@
 
 #define BLOCKS_IN_PREALLOCATED_HEAP 10
 
-extern struct heap *heaps;
+extern struct heap *g_heaps;
 
 void free(void *ptr);
 void *malloc(size_t size);

@@ -1,17 +1,25 @@
 #include "malloc.h"
 #include "utility.h"
 
-struct heap *heaps;
+# include <pthread.h>
+
+struct heap *g_heaps;
+static pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void free(void *ptr)
 {
 	if (ptr == NULL)
 		return;
 
-	if (heaps == NULL)
-		return;
+	pthread_mutex_lock(&g_mutex);
 
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	if (g_heaps == NULL)
+	{
+		pthread_mutex_unlock(&g_mutex);
+		return;
+	}
+
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		if (heap_does_include_ptr(heap, ptr))
 		{
@@ -23,9 +31,11 @@ void free(void *ptr)
 				heap_deallocate(heap);
 			}
 
-			return;
+			break;
 		}
 	}
+
+	pthread_mutex_unlock(&g_mutex);
 }
 
 void *malloc(size_t size)
@@ -37,11 +47,13 @@ void *malloc(size_t size)
 	if (size + block_get_meta_size() < size)
 		return NULL;
 
-	if (heaps == NULL)
+	pthread_mutex_lock(&g_mutex);
+
+	if (g_heaps == NULL)
 	{
 		// Initialize heaps
-		heaps = heap_preallocate(TINY_BLOCK_MIN_PAYLOAD_SIZE, TINY_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP);
-		heap_append(heaps, heap_preallocate(SMALL_BLOCK_MIN_PAYLOAD_SIZE, SMALL_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP));
+		g_heaps = heap_preallocate(TINY_BLOCK_MIN_PAYLOAD_SIZE, TINY_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP);
+		heap_append(g_heaps, heap_preallocate(SMALL_BLOCK_MIN_PAYLOAD_SIZE, SMALL_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP));
 	}
 
 	struct heap *heap = NULL;
@@ -51,17 +63,20 @@ void *malloc(size_t size)
 	{
 		// Generate large block
 		heap = heap_allocate(size + block_get_meta_size(), size + block_get_meta_size(), 1);
-		heap_append(heaps, heap);
+		heap_append(g_heaps, heap);
 	}
 	else
 	{
-		for (heap = heaps; heap != NULL; heap = heap->next)
+		for (heap = g_heaps; heap != NULL; heap = heap->next)
 		{
 			if (heap_is_suitable_for_allocation(heap, size))
 			{
 				result = heap_allocate_block(heap, size);
 				if (result != NULL)
+				{
+					pthread_mutex_unlock(&g_mutex);
 					return result;
+				}
 			}
 		}
 
@@ -69,20 +84,26 @@ void *malloc(size_t size)
 		if (size < TINY_BLOCK_MAX_PAYLOAD_SIZE)
 		{
 			heap = heap_allocate(TINY_BLOCK_MIN_PAYLOAD_SIZE, TINY_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP);
-			heap_append(heaps, heap);
+			heap_append(g_heaps, heap);
 		}
 		else if (size < SMALL_BLOCK_MAX_PAYLOAD_SIZE)
 		{
 			heap = heap_allocate(SMALL_BLOCK_MIN_PAYLOAD_SIZE, SMALL_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP);
-			heap_append(heaps, heap);
+			heap_append(g_heaps, heap);
 		}
 	}
 
 	// Heap not found and can't be created.
 	if (heap == NULL)
+	{
+		pthread_mutex_unlock(&g_mutex);
 		return NULL;
+	}
 
-	return heap_allocate_block(heap, size);
+	result = heap_allocate_block(heap, size);
+
+	pthread_mutex_unlock(&g_mutex);
+	return result;
 }
 
 void *realloc(void *ptr, size_t size)
@@ -92,7 +113,7 @@ void *realloc(void *ptr, size_t size)
 
 	// Try to resize corresponding block
 
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		if (heap_does_include_ptr(heap, ptr))
 		{

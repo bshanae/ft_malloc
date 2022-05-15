@@ -2,6 +2,7 @@
 #include "test_total_available_memory.h"
 #include "test_total_allocated_memory.h"
 #include "test_data.h"
+#include "test_async.h"
 #include "test_user.h"
 
 int main()
@@ -10,5 +11,6 @@ int main()
 	test_total_available_memory();
 	test_total_allocated_memory();
 	test_data();
+	test_async();
 	test_user();
 }

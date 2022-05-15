@@ -48,7 +48,8 @@ static inline int random_int_in_range(int min, int max)
 
 static inline void warm_up_heaps()
 {
-	free(malloc(1));
+	void *ptr = malloc(1);
+	free(ptr);
 }
 
 static inline void litter_heaps()
@@ -66,7 +67,7 @@ static inline void litter_heaps()
 
 static inline void validate_intermediate_state()
 {
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		size_t free_payload_size = 0;
 		for (struct block_header *header = heap->free_blocks; header != NULL; header = header->next)
@@ -82,7 +83,7 @@ static inline void validate_intermediate_state()
 
 static inline void validate_clean_state()
 {
-	for (struct heap *heap = heaps; heap != NULL; heap = heap->next)
+	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
 		if (!heap->is_preallocated)
 			exit_with_message("Clean state is invalid. Found non-preallocated heap.");

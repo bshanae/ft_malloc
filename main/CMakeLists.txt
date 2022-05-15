@@ -5,17 +5,9 @@ if (NOT TARGET ft)
 	add_subdirectory(../external/libft ${CMAKE_CURRENT_BINARY_DIR}/libft)
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
-#if(DEFINED $ENV{HOST_TYPE})
-#	set(HOST_TYPE $ENV{HOST_TYPE})
-#else()
-#	execute_process (
-#	    COMMAND bash -c "echo $(uname -m)_$(uname -s)"
-#		OUTPUT_VARIABLE HOST_TYPE
-#	)
-#endif()
+set(CMAKE_C_FLAGS "-Wall -Wextra -fPIC")
+set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/..)
 
 add_library(ft_malloc SHARED
 	src/block.c
@@ -32,3 +24,12 @@ target_include_directories(ft_malloc PRIVATE
 )
 
 target_link_libraries(ft_malloc ft)
+
+set_target_properties(ft_malloc PROPERTIES SUFFIX ".so")
+
+add_custom_command(TARGET ft_malloc
+	POST_BUILD
+    COMMAND bash main/create_link.sh
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/.."
+	COMMENT "Creating symbolic link to the library"
+)

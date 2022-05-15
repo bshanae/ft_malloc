@@ -109,7 +109,7 @@ void hex_dump(const void *ptr, size_t length)
 
 			buffer[buffer_i++] = ' ';
 
-			if ((byte_i + 1) % 8 == 0) // TODO Is space correct?
+			if ((byte_i + 1) % 8 == 0)
 				buffer[buffer_i++] = ' ';
 		}
 

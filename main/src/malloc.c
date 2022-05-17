@@ -1,10 +1,10 @@
 #include "malloc.h"
+
+#include <pthread.h>
 #include "utility.h"
 
-# include <pthread.h>
-
 struct heap *g_heaps;
-static pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void free(void *ptr)
 {

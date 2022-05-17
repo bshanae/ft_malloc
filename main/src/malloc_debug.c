@@ -1,10 +1,13 @@
 #include "malloc_debug.h"
 
+#include <pthread.h>
 #include "utility_memory.h"
 #include "utility_io.h"
 
 void show_alloc_mem()
 {
+	pthread_mutex_lock(&g_mutex);
+
 	size_t total_allocated_memory = 0;
 
 	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
@@ -48,10 +51,14 @@ void show_alloc_mem()
 	write_ulong(total_allocated_memory, 10, false);
 	write_str(" bytes");
 	write_break();
+
+	pthread_mutex_unlock(&g_mutex);
 }
 
 void show_alloc_mem_ex(const char *message)
 {
+	pthread_mutex_lock(&g_mutex);
+
 	if (message != NULL)
 	{
 		write_str(ANSI_BOLD);
@@ -115,10 +122,14 @@ void show_alloc_mem_ex(const char *message)
 	}
 
 	write_break();
+
+	pthread_mutex_unlock(&g_mutex);
 }
 
 void show_mem_debug(const char *message, t_bool show_allocated_blocks, t_bool show_free_blocks)
 {
+	pthread_mutex_lock(&g_mutex);
+
 	if (message != NULL)
 	{
 		write_str(ANSI_BOLD);
@@ -171,6 +182,8 @@ void show_mem_debug(const char *message, t_bool show_allocated_blocks, t_bool sh
 	}
 
 	write_break();
+
+	pthread_mutex_unlock(&g_mutex);
 }
 
 size_t get_total_available_memory()

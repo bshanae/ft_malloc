@@ -15,6 +15,7 @@
 #define BLOCKS_PER_HEAP 128
 
 extern struct heap *g_heaps;
+extern pthread_mutex_t g_mutex;
 
 void free(void *ptr);
 void *malloc(size_t size);

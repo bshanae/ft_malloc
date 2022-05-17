@@ -25,11 +25,13 @@ void free(void *ptr)
 		{
 			heap_free_block(heap, ptr);
 
+#ifdef ENABLE_CLEANUP
 			if (heap_is_empty(heap))
 			{
 				heap_remove(&g_heaps, heap);
 				heap_deallocate(heap);
 			}
+#endif
 
 			break;
 		}

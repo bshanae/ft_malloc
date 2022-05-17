@@ -14,6 +14,8 @@
 
 #define BLOCKS_PER_HEAP 100
 
+//#define ENABLE_CLEANUP
+
 extern struct heap *g_heaps;
 extern pthread_mutex_t g_mutex;
 

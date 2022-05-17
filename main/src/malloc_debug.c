@@ -72,10 +72,6 @@ void show_alloc_mem_ex(const char *message)
 		write_str("== HEAP =======================================================================");
 		write_break();
 
-		write_str("is preallocated : ");
-		write_bool(heap->is_preallocated);
-		write_break();
-
 		write_str("min block payload size : ");
 		write_ulong(heap->min_block_payload_size, 10, false);
 		write_break();

@@ -215,20 +215,27 @@ t_bool lessen_block_by_splitting(struct heap *heap, struct block_header *block, 
 
 // LIST MANIPULATION -------------------------------------------------------------------------------------------------------------------------------------------
 
-void heap_append(struct heap *base, struct heap *child)
+void heap_append(struct heap **base, struct heap *child)
 {
-	if (base == NULL)
+	if (*base == NULL)
+	{
+		*base = child;
 		return;
+	}
 
-	while (base->next != NULL)
-		base = base->next;
+	struct heap *iterator = *base;
+	while (iterator->next != NULL)
+		iterator = iterator->next;
 
-	base->next = child;
-	child->previous = base;
+	iterator->next = child;
+	child->previous = iterator;
 }
 
-void heap_remove(struct heap *target)
+void heap_remove(struct heap **base, struct heap *target)
 {
+	if (*base == target)
+		*base = target->next;
+
 	if (target->previous != NULL)
 		target->previous->next = target->next;
 
@@ -240,14 +247,6 @@ void heap_remove(struct heap *target)
 }
 
 // HEAP MANIPULATION -------------------------------------------------------------------------------------------------------------------------------------------
-
-struct heap *heap_preallocate(size_t min_block_payload_size, size_t max_block_payload_size, size_t number_of_blocks)
-{
-	struct heap *heap = heap_allocate(min_block_payload_size, max_block_payload_size, number_of_blocks);
-	heap->is_preallocated = true;
-
-	return heap;
-}
 
 struct heap *heap_allocate(size_t min_block_payload_size, size_t max_block_payload_size, size_t number_of_blocks)
 {
@@ -267,7 +266,6 @@ struct heap *heap_allocate(size_t min_block_payload_size, size_t max_block_paylo
 
 	// Initialize instance
 
-	heap->is_preallocated = false;
 	heap->min_block_payload_size = min_block_payload_size;
 	heap->max_block_payload_size = max_block_payload_size;
 

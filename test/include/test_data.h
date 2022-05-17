@@ -80,13 +80,14 @@ START_DATA_TEST(3)
 
 	char *ptr1 = malloc(16);
 	ft_strcpy(ptr1, str1);
-	free(ptr1);
 
 	char *ptr2 = malloc(16);
 	ft_strcpy(ptr2, str2);
-	free(ptr2);
 
 	VERIFY_STRING(ptr2, str2)
+
+	free(ptr1);
+	free(ptr2);
 FINISH_DATA_TEST
 
 START_DATA_TEST(4)

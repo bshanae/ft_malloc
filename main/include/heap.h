@@ -6,9 +6,6 @@
 
 struct heap
 {
-	// Preallocated heaps are not deleted, when they are empty
-	t_bool is_preallocated;
-
 	size_t min_block_payload_size;
 	size_t max_block_payload_size;
 
@@ -25,8 +22,8 @@ struct heap
 
 // LIST
 
-void heap_append(struct heap *base, struct heap *child);
-void heap_remove(struct heap *target);
+void heap_append(struct heap **base, struct heap *child);
+void heap_remove(struct heap **base, struct heap *target);
 
 // HEAP MANIPULATION
 

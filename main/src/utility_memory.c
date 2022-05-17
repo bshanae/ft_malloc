@@ -11,3 +11,12 @@ size_t get_allocation_limit()
 
 	return rpl.rlim_max;
 }
+
+size_t get_page_size()
+{
+#ifdef FAKE_PAGE_SIZE
+	return FAKE_PAGE_SIZE;
+#endif
+
+	return getpagesize();
+}

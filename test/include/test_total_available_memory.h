@@ -7,10 +7,7 @@
 	void test_total_available_memory_##index() \
 	{ \
 		const int _index = index; \
-		size_t _available_memory = 0; \
-         \
-		warm_up_heaps();
-
+		size_t _available_memory = 0;
 
 #define FINISH_TOTAL_AVAILABLE_MEMORY_TEST \
 		validate_clean_state(); \
@@ -39,15 +36,6 @@
 
 #define RUN_TOTAL_AVAILABLE_MEMORY_TEST(index) \
 	test_total_available_memory_##index();
-
-START_TOTAL_AVAILABLE_MEMORY_TEST(1)
-	SAVE_TOTAL_AVAILABLE_MEMORY
-
-	void *ptr0 = malloc(10);
-	VERIFY_TOTAL_AVAILABLE_MEMORY_DID_NOT_CHANGED
-
-	free(ptr0);
-FINISH_TOTAL_AVAILABLE_MEMORY_TEST
 
 START_TOTAL_AVAILABLE_MEMORY_TEST(2)
 	SAVE_TOTAL_AVAILABLE_MEMORY
@@ -122,7 +110,6 @@ FINISH_TOTAL_AVAILABLE_MEMORY_TEST
 
 t_bool test_total_available_memory()
 {
-	RUN_TOTAL_AVAILABLE_MEMORY_TEST(1)
 	RUN_TOTAL_AVAILABLE_MEMORY_TEST(2)
 	RUN_TOTAL_AVAILABLE_MEMORY_TEST(3)
 	RUN_TOTAL_AVAILABLE_MEMORY_TEST(4)

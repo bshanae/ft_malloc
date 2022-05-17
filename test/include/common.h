@@ -46,12 +46,6 @@ static inline int random_int_in_range(int min, int max)
 	return random_int() % (max - min) + min;
 }
 
-static inline void warm_up_heaps()
-{
-	void *ptr = malloc(1);
-	free(ptr);
-}
-
 static inline void litter_heaps()
 {
 	const size_t allocations_count = 10000;
@@ -85,8 +79,6 @@ static inline void validate_clean_state()
 {
 	for (struct heap *heap = g_heaps; heap != NULL; heap = heap->next)
 	{
-		if (!heap->is_preallocated)
-			exit_with_message("Clean state is invalid. Found non-preallocated heap.");
 		if (heap->total_payload_size != heap->free_payload_size)
 			exit_with_message("Clean state is invalid. Found heap with invalid free payload size.");
 

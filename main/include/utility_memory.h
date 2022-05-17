@@ -5,5 +5,6 @@
 #include "heap.h"
 
 size_t get_allocation_limit();
+size_t get_page_size();
 
 #endif

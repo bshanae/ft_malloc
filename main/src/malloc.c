@@ -52,8 +52,8 @@ void *malloc(size_t size)
 	if (g_heaps == NULL)
 	{
 		// Initialize heaps
-		g_heaps = heap_preallocate(TINY_BLOCK_MIN_PAYLOAD_SIZE, TINY_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP);
-		heap_append(g_heaps, heap_preallocate(SMALL_BLOCK_MIN_PAYLOAD_SIZE, SMALL_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP));
+		g_heaps = heap_preallocate(TINY_BLOCK_MIN_PAYLOAD_SIZE, TINY_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_PER_HEAP);
+		heap_append(g_heaps, heap_preallocate(SMALL_BLOCK_MIN_PAYLOAD_SIZE, SMALL_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_PER_HEAP));
 	}
 
 	struct heap *heap = NULL;
@@ -81,14 +81,14 @@ void *malloc(size_t size)
 		}
 
 		// If suitable heap is not found, create new heap for either tiny or small blocks
-		if (size < TINY_BLOCK_MAX_PAYLOAD_SIZE)
+		if (size <= TINY_BLOCK_MAX_PAYLOAD_SIZE)
 		{
-			heap = heap_allocate(TINY_BLOCK_MIN_PAYLOAD_SIZE, TINY_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP);
+			heap = heap_allocate(TINY_BLOCK_MIN_PAYLOAD_SIZE, TINY_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_PER_HEAP);
 			heap_append(g_heaps, heap);
 		}
-		else if (size < SMALL_BLOCK_MAX_PAYLOAD_SIZE)
+		else if (size <= SMALL_BLOCK_MAX_PAYLOAD_SIZE)
 		{
-			heap = heap_allocate(SMALL_BLOCK_MIN_PAYLOAD_SIZE, SMALL_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_IN_PREALLOCATED_HEAP);
+			heap = heap_allocate(SMALL_BLOCK_MIN_PAYLOAD_SIZE, SMALL_BLOCK_MAX_PAYLOAD_SIZE, BLOCKS_PER_HEAP);
 			heap_append(g_heaps, heap);
 		}
 	}

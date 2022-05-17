@@ -411,7 +411,7 @@ size_t heap_get_meta_size()
 
 size_t heap_compute_size(size_t block_payload_size, size_t number_of_blocks)
 {
-	const size_t page_size = getpagesize();
+	const size_t page_size = get_page_size();
 
 	const size_t desired_heap_size = block_compute_complete_size(block_payload_size) * number_of_blocks + heap_get_meta_size();
 	const size_t rounder_heap_size = (desired_heap_size / page_size + 1) * page_size;

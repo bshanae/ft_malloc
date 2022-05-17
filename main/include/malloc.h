@@ -12,7 +12,7 @@
 
 #define LARGE_BLOCK_MIN_PAYLOAD_SIZE (SMALL_BLOCK_MAX_PAYLOAD_SIZE + 1)
 
-#define BLOCKS_PER_HEAP 128
+#define BLOCKS_PER_HEAP 100
 
 extern struct heap *g_heaps;
 extern pthread_mutex_t g_mutex;

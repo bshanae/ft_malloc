@@ -1,5 +1,5 @@
-if [ "$HOSTTYPE" == '' ]; then
-HOSTTYPE="$(shell uname -m)_$(shell uname -s)"
+if [ "${HOSTTYPE}" == '' ]; then
+HOSTTYPE="$(uname -m)_$(uname -s)"
 fi
 
-ln -fs libft_malloc.so "libft_malloc_$HOSTTYPE.so"
+ln -fs libft_malloc.so "libft_malloc_${HOSTTYPE}.so"

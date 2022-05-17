@@ -381,6 +381,9 @@ void *heap_allocate_block(struct heap *heap, size_t requested_payload_size)
 
 void heap_free_block(struct heap *heap, void *ptr)
 {
+	if (!heap_is_valid_allocated_block(heap, ptr))
+		return;
+
 	struct block_header *header = block_get_header_from_payload(ptr);
 	header->is_allocated = false;
 
@@ -398,6 +401,17 @@ t_bool heap_try_resize_block(struct heap *heap, void *ptr, size_t desired_payloa
 
 	// Resize on same size... Why?
 	return true;
+}
+
+t_bool heap_is_valid_allocated_block(struct heap *heap, void *ptr)
+{
+	for (struct block_header *header = heap_get_begin(heap); heap_does_include_ptr(heap, header); header = block_get_next_header(block_get_footer_from_header(header)))
+	{
+		if (block_get_payload_from_header(header) == ptr && header->is_allocated)
+			return true;
+	}
+
+	return false;
 }
 
 // SIZE --------------------------------------------------------------------------------------------------------------------------------------------------------

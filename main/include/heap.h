@@ -36,6 +36,7 @@ void heap_deallocate(struct heap *heap);
 void *heap_allocate_block(struct heap *heap, size_t requested_payload_size);
 void heap_free_block(struct heap *heap, void *ptr);
 t_bool heap_try_resize_block(struct heap *heap, void *ptr, size_t desired_payload_size);
+t_bool heap_is_valid_allocated_block(struct heap *heap, void *ptr);
 
 // SIZE
 
